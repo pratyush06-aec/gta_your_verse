@@ -1,10 +1,24 @@
 import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import SplitType from 'split-type';
 
 const sequences = [
   { name: 'gta_landing', frames: 231 },
   { name: 'bar', frames: 240 },
   { name: 'gym', frames: 240 },
   { name: 'strip_club', frames: 240 }
+];
+
+const phrases = [
+  "NEON. NOISE. NO RULES.",
+  "THE CITY NEVER SLEEPS.",
+  "AFTER DARK, EVERYTHING CHANGES.",
+  "LIGHTS ON. WORLD OFF.",
+  "WELCOME TO YOUR SIDE OF THE CITY.",
+  "THE NIGHT HAS A NEW OWNER.",
+  "CREATE THE VIBE. OWN THE NIGHT.",
+  "YOUR STORY STARTS AFTER DARK.",
+  "NO MAP. NO RULES. JUST VIBES."
 ];
 
 const totalFrames = sequences.reduce((acc, seq) => acc + seq.frames, 0);
@@ -31,13 +45,68 @@ const drawImageCover = (ctx, img, canvas) => {
 const ScrollSequence = () => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const textRefs = useRef([]);
+  const masterTl = useRef(null);
+
+  // Clear refs on each render to prevent stale nodes in strict mode
+  textRefs.current = [];
+
+  // Text Animation Effect (Scroll Driven)
+  useEffect(() => {
+    if (textRefs.current.length === 0) return;
+    
+    // Reveal paragraphs and split text
+    gsap.set(textRefs.current, { opacity: 1 });
+    const splits = textRefs.current.map(el => new SplitType(el, { types: 'chars' }));
+    
+    // Create a master GSAP timeline tied to scroll
+    masterTl.current = gsap.timeline({ paused: true });
+
+    splits.forEach((split, index) => {
+      const phraseTl = gsap.timeline();
+      
+      // Force hide all characters initially
+      gsap.set(split.chars, { opacity: 0, y: 30 });
+
+      // Animate letters IN
+      phraseTl.to(split.chars, {
+        opacity: 1, 
+        y: 0,
+        stagger: 0.1, 
+        duration: 1,
+        ease: "power2.out"
+      });
+      
+      // Hold the phrase on screen
+      phraseTl.to({}, { duration: 1.5 });
+      
+      // Animate letters OUT
+      phraseTl.to(split.chars, {
+        opacity: 0,
+        y: -30,
+        stagger: 0.05,
+        duration: 0.5,
+        ease: "power2.in"
+      });
+
+      masterTl.current.add(phraseTl);
+    });
+    
+    // Initialize to 0
+    masterTl.current.progress(0);
+
+    return () => {
+      if (masterTl.current) masterTl.current.kill();
+      splits.forEach(split => split.revert());
+    };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
     // Set canvas dimensions to window inner size
-    canvas.width = window.innerWidth;
+    canvas.width = document.documentElement.clientWidth;
     canvas.height = window.innerHeight;
 
     const imageCache = new Array(totalFrames);
@@ -73,7 +142,9 @@ const ScrollSequence = () => {
       const scrollTop = html.scrollTop;
       const maxScrollTop = html.scrollHeight - window.innerHeight;
       
-      const scrollFraction = scrollTop / maxScrollTop;
+      const scrollFraction = Math.max(0, Math.min(1, scrollTop / maxScrollTop));
+      
+      // Update image frame
       const frameIndex = Math.min(
         totalFrames - 1,
         Math.floor(scrollFraction * totalFrames)
@@ -83,6 +154,10 @@ const ScrollSequence = () => {
         if (imageCache[frameIndex]) {
           drawImageCover(ctx, imageCache[frameIndex], canvas);
         }
+        // Update master text timeline
+        if (masterTl.current) {
+          masterTl.current.progress(scrollFraction);
+        }
       });
     };
 
@@ -90,14 +165,19 @@ const ScrollSequence = () => {
     
     // Handle resize
     const handleResize = () => {
-      canvas.width = window.innerWidth;
+      canvas.width = document.documentElement.clientWidth;
       canvas.height = window.innerHeight;
       
       const html = document.documentElement;
-      const scrollFraction = html.scrollTop / (Math.max(1, html.scrollHeight - window.innerHeight));
+      const scrollFraction = Math.max(0, Math.min(1, html.scrollTop / (Math.max(1, html.scrollHeight - window.innerHeight))));
+      
       const frameIndex = Math.min(totalFrames - 1, Math.floor(scrollFraction * totalFrames));
       if (imageCache[frameIndex]) {
         drawImageCover(ctx, imageCache[frameIndex], canvas);
+      }
+      
+      if (masterTl.current) {
+        masterTl.current.progress(scrollFraction);
       }
     };
     
@@ -113,6 +193,13 @@ const ScrollSequence = () => {
     <div className="scroll-container" ref={containerRef}>
       <div className="sticky-wrapper">
         <canvas ref={canvasRef}></canvas>
+        <div className="phrase-overlay">
+          {phrases.map((phrase, idx) => (
+            <p key={idx} ref={(el) => (textRefs.current[idx] = el)}>
+              {phrase}
+            </p>
+          ))}
+        </div>
       </div>
     </div>
   );

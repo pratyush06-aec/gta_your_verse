@@ -51,3 +51,36 @@ canvas {
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--glass-border);
 }
+
+.phrase-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  text-align: center;
+  width: 90%;
+  pointer-events: none;
+}
+
+.phrase-overlay p {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  font-size: 5rem;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #ffffff;
+  text-shadow: 0 8px 32px rgba(0,0,0,0.9);
+  margin: 0;
+  opacity: 0; /* Hide initially so they don't flash before GSAP kicks in */
+}
+
+/* Required for GSAP to animate chars vertically */
+.phrase-overlay .char {
+  display: inline-block;
+}
