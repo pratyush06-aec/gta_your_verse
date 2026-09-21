@@ -1,13 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
+  const [isHidden, setIsHidden] = useState(false);
+
+  useEffect(() => {
+    const handleFooterVisible = (e) => {
+      setIsHidden(e.detail);
+    };
+    window.addEventListener('footer-visible', handleFooterVisible);
+    return () => {
+      window.removeEventListener('footer-visible', handleFooterVisible);
+    };
+  }, []);
+
   return (
     <nav className="glass" style={{
       position: 'fixed',
       top: '20px',
       left: '50%',
-      transform: 'translateX(-50%)',
+      transform: isHidden ? 'translate(-50%, -150%)' : 'translate(-50%, 0)',
+      opacity: isHidden ? 0 : 1,
+      transition: 'transform 0.4s ease-in-out, opacity 0.4s ease-in-out',
       width: '80%',
       maxWidth: '1000px',
       borderRadius: '50px',
@@ -17,6 +31,7 @@ const Navbar = () => {
       alignItems: 'center',
       padding: '1rem 2.5rem',
       backgroundColor: 'rgba(11, 15, 25, 0.15)', // Extra transparency for navbar
+      pointerEvents: isHidden ? 'none' : 'auto'
     }}>
       <div style={{ fontSize: '1.5rem', fontWeight: 'bold', letterSpacing: '2px' }}>
         YOUR VERSE
