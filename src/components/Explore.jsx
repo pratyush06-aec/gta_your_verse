@@ -1,12 +1,54 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import * as THREE from 'three/webgpu';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import gsap from 'gsap';
 import SplitType from 'split-type';
+import { Flip } from 'gsap/Flip';
+import { IoArrowBack } from 'react-icons/io5';
+
+gsap.registerPlugin(Flip);
 
 const Explore = () => {
   const mountRef = useRef(null);
   const textRef = useRef(null);
+  const [showCards, setShowCards] = useState(false);
+  const [activeCard, setActiveCard] = useState(null);
+
+  const cardsData = [
+    "Enhance your character",
+    "Live your night life",
+    "Craft your Socials",
+    "Customize your map"
+  ];
+
+  const handleCardClick = (index) => {
+    if (activeCard !== null) return;
+    const state = Flip.getState(".card");
+    flushSync(() => {
+      setActiveCard(index);
+    });
+    Flip.from(state, {
+      duration: 0.6,
+      ease: "power2.inOut",
+      absolute: true,
+      zIndex: 50
+    });
+  };
+
+  const handleBackClick = (e) => {
+    e.stopPropagation();
+    const state = Flip.getState(".card");
+    flushSync(() => {
+      setActiveCard(null);
+    });
+    Flip.from(state, {
+      duration: 0.6,
+      ease: "power2.inOut",
+      absolute: true,
+      zIndex: 50
+    });
+  };
 
   useEffect(() => {
     if (!textRef.current) return;
@@ -27,14 +69,17 @@ const Explore = () => {
       stagger: 0.05,
       ease: "power3.out"
     })
-    // Wait for 3 seconds, then disappear
+    // Wait for 1.5 seconds, then disappear
     .to(split.chars, {
       opacity: 0,
       y: -50,
       duration: 0.8,
       stagger: 0.02,
       ease: "power3.in",
-      delay: 1.5
+      delay: 1.5,
+      onComplete: () => {
+        setShowCards(true);
+      }
     });
 
     return () => {
@@ -232,13 +277,46 @@ const Explore = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        pointerEvents: 'none', // Allow interacting with the 3D scene through the text
+        pointerEvents: showCards ? 'auto' : 'none', // Allow interacting with cards
         color: 'white',
         textShadow: '0 4px 20px rgba(0,0,0,0.8)'
       }}>
-        <h1 ref={textRef} style={{ fontSize: '5rem', letterSpacing: '0.1em', margin: 0, fontWeight: 800, textAlign: 'center', textTransform: 'uppercase' }}>
-          Visualize Your Taste
-        </h1>
+        {!showCards && (
+          <h1 ref={textRef} style={{ fontSize: '5rem', letterSpacing: '0.1em', margin: 0, fontWeight: 800, textAlign: 'center', textTransform: 'uppercase' }}>
+            Visualize Your Taste
+          </h1>
+        )}
+
+        {showCards && (
+          <div className="cards-container">
+            {cardsData.map((title, index) => {
+              const isActive = activeCard === index;
+              const isHidden = activeCard !== null && activeCard !== index;
+
+              return (
+                <div 
+                  key={index} 
+                  className={`card ${isActive ? 'full-screen' : ''}`}
+                  onClick={() => isActive ? null : handleCardClick(index)}
+                  style={{ 
+                    opacity: isHidden ? 0 : 1,
+                    pointerEvents: isHidden ? 'none' : 'auto'
+                  }}
+                >
+                  {isActive ? (
+                    <div className="card-inner-expanded">
+                      <button className="back-btn" onClick={handleBackClick}>
+                        <IoArrowBack size={30} />
+                      </button>
+                    </div>
+                  ) : (
+                    <h3 className="card-title">{title}</h3>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
