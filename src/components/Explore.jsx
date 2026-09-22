@@ -15,6 +15,7 @@ import trevorImg from '../../assets/Trevor.png';
 import mapImg from '../../assets/map.jpg';
 import nightLifeImg from '../../assets/night_life.jpg';
 import ImageEditor from '@unlayer/react-image-editor';
+import EditorSidebar, { TOOL_NAMES } from './EditorSidebar';
 
 gsap.registerPlugin(Flip);
 
@@ -26,11 +27,33 @@ const Explore = ({ isPlaying, togglePlay }) => {
   const [previewImage, setPreviewImage] = useState(null);
   const [isEditorMaximized, setIsEditorMaximized] = useState(false);
 
+  // Editor Sidebar state
+  const [theme, setTheme] = useState('dark');
+  const [locale, setLocale] = useState('en');
+  const [dock, setDock] = useState('right');
+  const [tools, setTools] = useState(() => 
+    Object.fromEntries(TOOL_NAMES.map((tool) => [tool, true]))
+  );
+  const [currentImage, setCurrentImage] = useState(null);
+  const editorRef = useRef(null);
+
   const cardsData = [
-    { title: "Enhance your character", image: lamarImg, seedImage: lamarImg },
-    { title: "Live your night life", image: michaelImg, seedImage: nightLifeImg },
-    { title: "Craft your Socials", image: trevorImg, seedImage: trevorImg },
-    { title: "Customize your map", image: franklinImg, seedImage: mapImg }
+    { 
+      title: "Enhance your character", image: lamarImg, seedImage: lamarImg,
+      defaultTools: { crop: true, filter: true, text: true, draw: true, stickers: true, frame: true, resize: false, shapes: false }
+    },
+    { 
+      title: "Live your night life", image: michaelImg, seedImage: nightLifeImg,
+      defaultTools: { crop: true, filter: true, text: true, shapes: true, stickers: true, frame: true, resize: false, draw: false }
+    },
+    { 
+      title: "Craft your Socials", image: trevorImg, seedImage: trevorImg,
+      defaultTools: { crop: true, filter: true, text: true, stickers: true, frame: true, resize: false, draw: false, shapes: false }
+    },
+    { 
+      title: "Customize your map", image: franklinImg, seedImage: mapImg,
+      defaultTools: { crop: true, draw: true, text: true, shapes: true, stickers: true, resize: false, filter: false, frame: false }
+    }
   ];
 
   const handleCardClick = (index) => {
@@ -38,6 +61,8 @@ const Explore = ({ isPlaying, togglePlay }) => {
     const state = Flip.getState(".card");
     flushSync(() => {
       setActiveCard(index);
+      setCurrentImage(cardsData[index].seedImage);
+      setTools(cardsData[index].defaultTools);
     });
     window.dispatchEvent(new CustomEvent('footer-visible', { detail: true }));
     Flip.from(state, {
@@ -367,12 +392,36 @@ const Explore = ({ isPlaying, togglePlay }) => {
                         zIndex: 50, 
                         borderRadius: isEditorMaximized ? '0' : '20px', 
                         overflow: 'hidden',
-                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        background: 'rgba(11, 15, 25, 0.9)',
                       }}>
+                        <EditorSidebar 
+                          theme={theme}
+                          onThemeChange={setTheme}
+                          locale={locale}
+                          onLocaleChange={setLocale}
+                          dock={dock}
+                          onDockChange={setDock}
+                          tools={tools}
+                          onToolToggle={(tool) => setTools((prev) => ({ ...prev, [tool]: !prev[tool] }))}
+                          onResetImage={() => setCurrentImage(card.seedImage)}
+                          onUploadImage={(file) => {
+                            const reader = new FileReader();
+                            reader.onload = () => setCurrentImage(reader.result);
+                            reader.readAsDataURL(file);
+                          }}
+                        />
                         <ImageEditor
-                          image={card.seedImage}
-                          options={{ theme: 'dark' }}
-                          style={{ width: '100%', height: '100%', minHeight: '100%' }}
+                          ref={editorRef}
+                          image={currentImage || card.seedImage}
+                          options={{ 
+                            theme,
+                            locale,
+                            features: { imageEditor: { dock, tools } }
+                          }}
+                          style={{ flex: 1, width: '100%', height: '100%', minHeight: '100%' }}
                           onSave={({ dataUrl }) => {
                             setPreviewImage(dataUrl);
                           }}
