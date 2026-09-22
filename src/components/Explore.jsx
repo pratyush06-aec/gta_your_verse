@@ -1,9 +1,47 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three/webgpu';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import gsap from 'gsap';
+import SplitType from 'split-type';
 
 const Explore = () => {
   const mountRef = useRef(null);
+  const textRef = useRef(null);
+
+  useEffect(() => {
+    if (!textRef.current) return;
+
+    // Split text into characters
+    const split = new SplitType(textRef.current, { types: 'chars' });
+
+    // Initial state: hidden and slightly below
+    gsap.set(split.chars, { opacity: 0, y: 50 });
+
+    const tl = gsap.timeline();
+
+    // Animate in character by character
+    tl.to(split.chars, {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      stagger: 0.05,
+      ease: "power3.out"
+    })
+    // Wait for 3 seconds, then disappear
+    .to(split.chars, {
+      opacity: 0,
+      y: -50,
+      duration: 0.8,
+      stagger: 0.02,
+      ease: "power3.in",
+      delay: 1.5
+    });
+
+    return () => {
+      tl.kill();
+      split.revert();
+    };
+  }, []);
 
   useEffect(() => {
     let camera, scene, renderer;
@@ -198,8 +236,9 @@ const Explore = () => {
         color: 'white',
         textShadow: '0 4px 20px rgba(0,0,0,0.8)'
       }}>
-        <h1 style={{ fontSize: '5rem', letterSpacing: '0.2em', margin: 0, fontWeight: 800 }}>EXPLORE</h1>
-        <p style={{ fontSize: '1.5rem', letterSpacing: '0.1em', opacity: 0.8 }}>Discover the unknown</p>
+        <h1 ref={textRef} style={{ fontSize: '5rem', letterSpacing: '0.1em', margin: 0, fontWeight: 800, textAlign: 'center', textTransform: 'uppercase' }}>
+          Visualize Your Taste
+        </h1>
       </div>
     </div>
   );
