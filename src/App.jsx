@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollSequence from './components/ScrollSequence';
 import About from './components/About';
+import Explore from './components/Explore';
 import musicFile from '../videoplayback.weba';
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
       <Navbar isPlaying={isPlaying} togglePlay={togglePlay} />
       <Routes>
         <Route path="/" element={<ScrollSequence />} />
+        <Route path="/explore" element={<Explore />} />
         <Route path="/about" element={<About />} />
       </Routes>
       <Footer />
