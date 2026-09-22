@@ -6,20 +6,26 @@ import gsap from 'gsap';
 import SplitType from 'split-type';
 import { Flip } from 'gsap/Flip';
 import { IoArrowBack } from 'react-icons/io5';
+import { FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
+
+import franklinImg from '../../assets/Franklin.png';
+import lamarImg from '../../assets/Lamar.png';
+import michaelImg from '../../assets/Michael.png';
+import trevorImg from '../../assets/Trevor.png';
 
 gsap.registerPlugin(Flip);
 
-const Explore = () => {
+const Explore = ({ isPlaying, togglePlay }) => {
   const mountRef = useRef(null);
   const textRef = useRef(null);
   const [showCards, setShowCards] = useState(false);
   const [activeCard, setActiveCard] = useState(null);
 
   const cardsData = [
-    "Enhance your character",
-    "Live your night life",
-    "Craft your Socials",
-    "Customize your map"
+    { title: "Enhance your character", image: lamarImg },
+    { title: "Live your night life", image: michaelImg },
+    { title: "Craft your Socials", image: trevorImg },
+    { title: "Customize your map", image: franklinImg }
   ];
 
   const handleCardClick = (index) => {
@@ -28,6 +34,7 @@ const Explore = () => {
     flushSync(() => {
       setActiveCard(index);
     });
+    window.dispatchEvent(new CustomEvent('footer-visible', { detail: true }));
     Flip.from(state, {
       duration: 0.6,
       ease: "power2.inOut",
@@ -42,6 +49,7 @@ const Explore = () => {
     flushSync(() => {
       setActiveCard(null);
     });
+    window.dispatchEvent(new CustomEvent('footer-visible', { detail: false }));
     Flip.from(state, {
       duration: 0.6,
       ease: "power2.inOut",
@@ -87,6 +95,17 @@ const Explore = () => {
       split.revert();
     };
   }, []);
+
+  useEffect(() => {
+    if (showCards) {
+      // Animate the cards entering the screen
+      gsap.fromTo(
+        ".card",
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: "power3.out" }
+      );
+    }
+  }, [showCards]);
 
   useEffect(() => {
     let camera, scene, renderer;
@@ -289,7 +308,7 @@ const Explore = () => {
 
         {showCards && (
           <div className="cards-container">
-            {cardsData.map((title, index) => {
+            {cardsData.map((card, index) => {
               const isActive = activeCard === index;
               const isHidden = activeCard !== null && activeCard !== index;
 
@@ -303,14 +322,21 @@ const Explore = () => {
                     pointerEvents: isHidden ? 'none' : 'auto'
                   }}
                 >
+                  <img className="card-bg" src={card.image} alt={card.title} />
+
                   {isActive ? (
                     <div className="card-inner-expanded">
-                      <button className="back-btn" onClick={handleBackClick}>
-                        <IoArrowBack size={30} />
-                      </button>
+                      <div style={{ position: 'absolute', top: '2rem', left: '2rem', display: 'flex', gap: '1.5rem', zIndex: 60 }}>
+                        <button className="back-btn" style={{ position: 'relative', top: 0, left: 0 }} onClick={handleBackClick}>
+                          <IoArrowBack size={36} />
+                        </button>
+                        <button className="back-btn" style={{ position: 'relative', top: 0, left: 0 }} onClick={(e) => { e.stopPropagation(); togglePlay(); }}>
+                          {isPlaying ? <FaVolumeUp size={30} /> : <FaVolumeMute size={30} />}
+                        </button>
+                      </div>
                     </div>
                   ) : (
-                    <h3 className="card-title">{title}</h3>
+                    <h3 className="card-title">{card.title}</h3>
                   )}
                 </div>
               );

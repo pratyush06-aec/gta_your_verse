@@ -49,7 +49,7 @@ function App() {
       <Navbar isPlaying={isPlaying} togglePlay={togglePlay} />
       <Routes>
         <Route path="/" element={<ScrollSequence />} />
-        <Route path="/explore" element={<Explore />} />
+        <Route path="/explore" element={<Explore isPlaying={isPlaying} togglePlay={togglePlay} />} />
         <Route path="/about" element={<About />} />
       </Routes>
       <Footer />

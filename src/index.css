@@ -99,9 +99,11 @@ canvas {
 }
 
 .card {
+  position: relative;
+  overflow: hidden;
   flex: 1;
   min-width: 200px;
-  height: 300px;
+  height: 450px;
   background: rgba(11, 15, 25, 0.4);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -121,13 +123,35 @@ canvas {
   border-color: rgba(255, 255, 255, 0.4);
 }
 
+.card-bg {
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  object-fit: cover;
+  filter: blur(6px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.6;
+  transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.card:hover .card-bg {
+  filter: blur(4px);
+  opacity: 0.8;
+}
+
 .card-title {
+  position: relative;
+  z-index: 1;
   font-size: 1.5rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin: 0;
   line-height: 1.4;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.9);
 }
 
 /* GSAP Flip Full Screen State */
@@ -164,20 +188,24 @@ canvas {
   position: absolute;
   top: 2rem;
   left: 2rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 60;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .back-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
 }
