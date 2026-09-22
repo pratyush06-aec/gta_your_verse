@@ -6,12 +6,15 @@ import gsap from 'gsap';
 import SplitType from 'split-type';
 import { Flip } from 'gsap/Flip';
 import { IoArrowBack } from 'react-icons/io5';
-import { FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
+import { FaVolumeUp, FaVolumeMute, FaExpand, FaCompress } from 'react-icons/fa';
 
 import franklinImg from '../../assets/Franklin.png';
 import lamarImg from '../../assets/Lamar.png';
 import michaelImg from '../../assets/Michael.png';
 import trevorImg from '../../assets/Trevor.png';
+import mapImg from '../../assets/map.jpg';
+import nightLifeImg from '../../assets/night_life.jpg';
+import ImageEditor from '@unlayer/react-image-editor';
 
 gsap.registerPlugin(Flip);
 
@@ -20,12 +23,14 @@ const Explore = ({ isPlaying, togglePlay }) => {
   const textRef = useRef(null);
   const [showCards, setShowCards] = useState(false);
   const [activeCard, setActiveCard] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [isEditorMaximized, setIsEditorMaximized] = useState(false);
 
   const cardsData = [
-    { title: "Enhance your character", image: lamarImg },
-    { title: "Live your night life", image: michaelImg },
-    { title: "Craft your Socials", image: trevorImg },
-    { title: "Customize your map", image: franklinImg }
+    { title: "Enhance your character", image: lamarImg, seedImage: lamarImg },
+    { title: "Live your night life", image: michaelImg, seedImage: nightLifeImg },
+    { title: "Craft your Socials", image: trevorImg, seedImage: trevorImg },
+    { title: "Customize your map", image: franklinImg, seedImage: mapImg }
   ];
 
   const handleCardClick = (index) => {
@@ -326,13 +331,52 @@ const Explore = ({ isPlaying, togglePlay }) => {
 
                   {isActive ? (
                     <div className="card-inner-expanded">
-                      <div style={{ position: 'absolute', top: '2rem', left: '2rem', display: 'flex', gap: '1.5rem', zIndex: 60 }}>
+                      {/* Standard floating buttons when not maximized */}
+                      <div style={{ 
+                        position: 'absolute', top: '2rem', left: '2rem', display: 'flex', gap: '1.5rem', zIndex: 60, 
+                        opacity: isEditorMaximized ? 0 : 1, pointerEvents: isEditorMaximized ? 'none' : 'auto', transition: 'all 0.3s ease' 
+                      }}>
                         <button className="back-btn" style={{ position: 'relative', top: 0, left: 0 }} onClick={handleBackClick}>
-                          <IoArrowBack size={36} />
+                          <IoArrowBack size={30} />
                         </button>
                         <button className="back-btn" style={{ position: 'relative', top: 0, left: 0 }} onClick={(e) => { e.stopPropagation(); togglePlay(); }}>
-                          {isPlaying ? <FaVolumeUp size={30} /> : <FaVolumeMute size={30} />}
+                          {isPlaying ? <FaVolumeUp size={24} /> : <FaVolumeMute size={24} />}
                         </button>
+                        <button className="back-btn" style={{ position: 'relative', top: 0, left: 0 }} onClick={(e) => { e.stopPropagation(); setIsEditorMaximized(true); }}>
+                          <FaExpand size={24} />
+                        </button>
+                      </div>
+
+                      {/* Small minimize button when maximized */}
+                      <button 
+                        style={{ 
+                          position: 'absolute', top: '12px', left: '150px', width: '32px', height: '32px', zIndex: 70,
+                          opacity: isEditorMaximized ? 1 : 0, pointerEvents: isEditorMaximized ? 'auto' : 'none', transition: 'all 0.3s ease',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', color: '#a0a0a0', cursor: 'pointer'
+                        }} 
+                        onMouseEnter={(e) => e.currentTarget.style.color = '#fff'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = '#a0a0a0'}
+                        onClick={(e) => { e.stopPropagation(); setIsEditorMaximized(false); }}
+                      >
+                        <FaCompress size={18} />
+                      </button>
+
+                      <div className="editor-container" style={{ 
+                        position: 'absolute', 
+                        inset: isEditorMaximized ? '0' : '120px 20px 20px 20px', 
+                        zIndex: 50, 
+                        borderRadius: isEditorMaximized ? '0' : '20px', 
+                        overflow: 'hidden',
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+                      }}>
+                        <ImageEditor
+                          image={card.seedImage}
+                          options={{ theme: 'dark' }}
+                          style={{ width: '100%', height: '100%', minHeight: '100%' }}
+                          onSave={({ dataUrl }) => {
+                            setPreviewImage(dataUrl);
+                          }}
+                        />
                       </div>
                     </div>
                   ) : (
@@ -344,6 +388,27 @@ const Explore = ({ isPlaying, togglePlay }) => {
           </div>
         )}
       </div>
+
+      {previewImage && (
+        <div className="preview-overlay">
+          <img src={previewImage} alt="Preview" style={{ maxWidth: '90%', maxHeight: '75vh', borderRadius: '15px', objectFit: 'contain', boxShadow: '0 10px 40px rgba(0,0,0,0.5)' }} />
+          <div style={{ display: 'flex', gap: '20px', marginTop: '30px' }}>
+            <a 
+              href={previewImage} 
+              download="gta_verse_custom.png" 
+              className="action-btn download-btn"
+            >
+              Download
+            </a>
+            <button 
+              className="action-btn back-btn-alt" 
+              onClick={() => setPreviewImage(null)}
+            >
+              Back to Editor
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

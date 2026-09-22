@@ -209,3 +209,57 @@ canvas {
   background: rgba(255, 255, 255, 0.25);
   transform: scale(1.05);
 }
+
+.preview-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+.action-btn {
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  outline: none;
+  letter-spacing: 1px;
+}
+
+.download-btn {
+  background: #fff;
+  color: #000;
+}
+
+.download-btn:hover {
+  background: #eee;
+  transform: scale(1.05);
+}
+
+.back-btn-alt {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.back-btn-alt:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.editor-container > div,
+.editor-container iframe {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+}
