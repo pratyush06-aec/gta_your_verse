@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 
-const Navbar = () => {
+const Navbar = ({ isPlaying, togglePlay }) => {
   const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
@@ -41,10 +42,22 @@ const Navbar = () => {
         listStyle: 'none',
         gap: '2rem',
         fontSize: '1rem',
+        alignItems: 'center',
+        margin: 0,
+        padding: 0
       }}>
         <li style={{ cursor: 'pointer' }}><Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>Home</Link></li>
         <li style={{ cursor: 'pointer' }}><Link to="/explore" style={{ color: 'inherit', textDecoration: 'none' }}>Explore</Link></li>
         <li style={{ cursor: 'pointer' }}><Link to="/about" style={{ color: 'inherit', textDecoration: 'none' }}>About</Link></li>
+        
+        {/* Music Button */}
+        <li 
+          style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', marginLeft: '1rem' }} 
+          onClick={togglePlay}
+          title={isPlaying ? "Mute Music" : "Play Music"}
+        >
+          {isPlaying ? <FaVolumeUp size={20} /> : <FaVolumeMute size={20} />}
+        </li>
       </ul>
     </nav>
   );
