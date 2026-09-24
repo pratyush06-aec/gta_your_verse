@@ -57,18 +57,14 @@
 ## 🎬 Demo
 
 <p align="center">
-  <a href="assets/project_clip.mp4">
-    <img src="screenshots/landing_page.png" alt="Watch the Demo" width="700"/>
-  </a>
+  <video src="https://github.com/pratyush06-aec/gta_your_verse/raw/main/assets/project_clip.mp4" controls="controls" muted="muted" style="max-height:640px;">
+    Your browser does not support the video tag.
+  </video>
 </p>
 
 <p align="center">
-  <em>👆 Click the image above to watch the full project clip, or download <a href="assets/project_clip.mp4"><code>assets/project_clip.mp4</code></a> directly.</em>
+  <em>👆 Watch the full project clip, or download <a href="https://github.com/pratyush06-aec/gta_your_verse/raw/main/assets/project_clip.mp4"><code>assets/project_clip.mp4</code></a> directly.</em>
 </p>
-
-https://github.com/user-attachments/assets/project_clip.mp4
-
-> **Note:** If the video doesn't render inline, download `assets/project_clip.mp4` from this repository to watch the full walkthrough.
 
 ---
 
