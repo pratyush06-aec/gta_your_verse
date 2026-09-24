@@ -9,6 +9,12 @@
 </p>
 
 <p align="center">
+  <a href="https://gta-your-verse.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
+</p>
+
+<p align="center">
   <a href="https://github.com/pratyush06-aec/gta_your_verse/stargazers"><img src="https://img.shields.io/github/stars/pratyush06-aec/gta_your_verse?style=for-the-badge&color=gold" alt="Stars" /></a>
   <a href="https://github.com/pratyush06-aec/gta_your_verse/network/members"><img src="https://img.shields.io/github/forks/pratyush06-aec/gta_your_verse?style=for-the-badge&color=blue" alt="Forks" /></a>
   <a href="https://github.com/pratyush06-aec/gta_your_verse/issues"><img src="https://img.shields.io/github/issues/pratyush06-aec/gta_your_verse?style=for-the-badge&color=red" alt="Issues" /></a>
@@ -222,6 +228,16 @@ To preview the production build locally:
 ```bash
 npm run preview
 ```
+
+### 🌐 Deployment (Vercel)
+
+The project is fully configured for seamless deployment on Vercel. 
+Since the application uses `react-router-dom` for client-side routing, a `vercel.json` file is included in the root directory to handle rewrite rules (preventing 404 errors when a user reloads routes like `/explore`).
+
+1. Push your code to a GitHub repository.
+2. Import the repository in your [Vercel Dashboard](https://vercel.com).
+3. Vercel will automatically detect the **Vite** framework and configure the build settings.
+4. Click **Deploy**.
 
 ---
 
