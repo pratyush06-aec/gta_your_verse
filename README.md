@@ -56,11 +56,7 @@
 
 ## 🎬 Demo
 
-<p align="center">
-  <video src="https://github.com/pratyush06-aec/gta_your_verse/raw/main/assets/project_clip.mp4" controls="controls" muted="muted" style="max-height:640px;">
-    Your browser does not support the video tag.
-  </video>
-</p>
+https://github.com/pratyush06-aec/gta_your_verse/raw/main/assets/project_clip.mp4
 
 <p align="center">
   <em>👆 Watch the full project clip, or download <a href="https://github.com/pratyush06-aec/gta_your_verse/raw/main/assets/project_clip.mp4"><code>assets/project_clip.mp4</code></a> directly.</em>
