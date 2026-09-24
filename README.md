@@ -56,7 +56,7 @@
 
 ## 🎬 Demo
 
-<video src="/assets/project_clip.mp4" controls="controls" width="100%"></video>
+<video src="assets/project_clip.mp4" controls="controls" width="100%"></video>
 
 <p align="center">
   <em>👆 Watch the full project clip, or download <a href="https://github.com/pratyush06-aec/gta_your_verse/raw/main/assets/project_clip.mp4"><code>assets/project_clip.mp4</code></a> directly.</em>
