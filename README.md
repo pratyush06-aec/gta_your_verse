@@ -385,7 +385,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 📬 Contact
 
-**Pratyush Dutta** — Creator & Developer
+**Pratyush Dutta** — Developer
 
 <p>
   <a href="https://www.linkedin.com/in/pratyush-dutta-221b94302/" target="_blank"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
